@@ -81,8 +81,9 @@ class RepositoryController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(Repository $repository)
     {
-        //
+        $repository->delete();
+        return redirect()->route('repositories.index');
     }
 }
