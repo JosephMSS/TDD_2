@@ -70,10 +70,8 @@ class RepositoryController extends Controller
      */
     public function update(Request $request, Repository $repository)
     {
-        if($request->user()->id!=$repository->user_id)
-        {
-            abort(403);
-        }
+        $this->authorize('pass',$repository);
+
         $repository->update($request->all());
 
         return  redirect()->route('repositories.edit', $repository);
@@ -87,7 +85,11 @@ class RepositoryController extends Controller
      */
     public function destroy(Repository $repository)
     {
+        $this->authorize('pass',$repository);
+
         $repository->delete();
+
         return redirect()->route('repositories.index');
     }
+    
 }

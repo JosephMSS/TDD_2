@@ -83,17 +83,31 @@ class RepositoryControllerTest extends TestCase
             ->assertStatus(302) //valido una redireccion a la misma pagina
             ->assertSessionHasErrors(['url', 'description']); //que existan errores en los valores requeridos 
     }
-    public function test_delete()
+    public function test_destroy()
     {
-        $repository = Repository::factory()->create();
-
         $user = User::factory()->create();
+        $repository = Repository::factory()->create(['user_id' => $user->id]);
 
-        $this->actingAs($user) //emplea el usuario para la autenticacion.
+        $this
+            ->actingAs($user)
             ->delete("repositories/$repository->id")
             ->assertRedirect('repositories');
 
-        $this->assertDatabaseMissing('repositories', ['id' => $repository->id]);
+        $this->assertDatabaseMissing('repositories', [
+            'id' => $repository->id,
+            'url' => $repository->url,
+            'description' => $repository->description,
+        ]);
+    }
+    public function test_destroy_policy()
+    {
+        $user = User::factory()->create(); // id = 1 
+        $repository = Repository::factory()->create(); // user_id = 2
+
+        $this
+            ->actingAs($user)
+            ->delete("repositories/$repository->id")
+            ->assertStatus(403);
     }
 
     /**
