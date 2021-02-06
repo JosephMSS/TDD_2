@@ -2,6 +2,8 @@
 
 namespace Tests\Feature\Http\Controllers;
 
+use App\Models\Repository;
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
@@ -13,6 +15,7 @@ class RepositoryControllerTest extends TestCase
      *
      * @return void
      */
+    use RefreshDatabase;
     public function test_guest()
     {
         $this->get('repositories')->assertRedirect('login'); //index
@@ -23,5 +26,22 @@ class RepositoryControllerTest extends TestCase
         $this->get('repositories/create')->assertRedirect('login'); //create
         $this->post('repositories', [])->assertRedirect('login'); //store
 
+    }
+    public function test_store()
+    {
+        $repository = Repository::factory()->make();
+        
+        $data = [
+            'url' => $repository->url,
+            'description' => $repository->description
+        ];
+        
+        $user = User::factory()->create();
+        
+        $this->actingAs($user) //emplea el usuario para la autenticacion.
+            ->post('repositories', $data)
+            ->assertRedirect('repositories');
+
+        $this->assertDatabaseHas('repositories', $data);
     }
 }
