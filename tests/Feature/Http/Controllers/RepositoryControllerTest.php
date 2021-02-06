@@ -30,17 +30,35 @@ class RepositoryControllerTest extends TestCase
     public function test_store()
     {
         $repository = Repository::factory()->make();
-        
+
         $data = [
             'url' => $repository->url,
             'description' => $repository->description
         ];
-        
+
         $user = User::factory()->create();
-        
+
         $this->actingAs($user) //emplea el usuario para la autenticacion.
             ->post('repositories', $data)
             ->assertRedirect('repositories');
+
+        $this->assertDatabaseHas('repositories', $data);
+    }
+    public function test_update()
+    {
+        $repository = Repository::factory()->create();
+        $newData = Repository::factory()->make();
+
+        $data = [
+            'url' => $newData->url,
+            'description' => $newData->description
+        ];
+
+        $user = User::factory()->create();
+
+        $this->actingAs($user) //emplea el usuario para la autenticacion.
+            ->put("repositories/$repository->id", $data)
+            ->assertRedirect("repositories/$repository->id/edit");
 
         $this->assertDatabaseHas('repositories', $data);
     }
