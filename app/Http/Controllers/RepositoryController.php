@@ -70,6 +70,10 @@ class RepositoryController extends Controller
      */
     public function update(Request $request, Repository $repository)
     {
+        if($request->user()->id!=$repository->user_id)
+        {
+            abort(403);
+        }
         $repository->update($request->all());
 
         return  redirect()->route('repositories.edit', $repository);

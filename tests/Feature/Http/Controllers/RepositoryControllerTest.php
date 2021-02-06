@@ -30,14 +30,14 @@ class RepositoryControllerTest extends TestCase
     public function test_store()
     {
         $repository = Repository::factory()->make();
-        
+
         $data = [
             'url' => $repository->url,
             'description' => $repository->description
         ];
-        
+
         $user = User::factory()->create();
-        
+
         $this->actingAs($user) //emplea el usuario para la autenticacion.
             ->post('repositories', $data)
             ->assertRedirect('repositories');
@@ -46,16 +46,16 @@ class RepositoryControllerTest extends TestCase
     }
     public function test_update()
     {
-        $repository = Repository::factory()->create();
+        $user = User::factory()->create();
+        $repository = Repository::factory()->create(['user_id'=>$user->id]);
         $newData = Repository::factory()->make();
-        
+
         $data = [
             'url' => $newData->url,
             'description' => $newData->description
         ];
-        
-        $user = User::factory()->create();
-        
+
+
         $this->actingAs($user) //emplea el usuario para la autenticacion.
             ->put("repositories/$repository->id", $data)
             ->assertRedirect("repositories/$repository->id/edit");
@@ -63,36 +63,64 @@ class RepositoryControllerTest extends TestCase
         $this->assertDatabaseHas('repositories', $data);
     }
     public function test_validate_store()
-    {        
+    {
         $user = User::factory()->create();
-        
+
         $this->actingAs($user) //emplea el usuario para la autenticacion.
             ->post('repositories', [])
-            ->assertStatus(302)//valido una redireccion a la misma pagina
-            ->assertSessionHasErrors(['url','description']);//que existan errores en los valores requeridos 
+            ->assertStatus(302) //valido una redireccion a la misma pagina
+            ->assertSessionHasErrors(['url', 'description']); //que existan errores en los valores requeridos 
 
     }
     public function test_validate_update()
     {
         $repository = Repository::factory()->create();
-        
+
         $user = User::factory()->create();
-        
+
         $this->actingAs($user) //emplea el usuario para la autenticacion.
             ->put("repositories/$repository->id", [])
-            ->assertStatus(302)//valido una redireccion a la misma pagina
-            ->assertSessionHasErrors(['url','description']);//que existan errores en los valores requeridos 
+            ->assertStatus(302) //valido una redireccion a la misma pagina
+            ->assertSessionHasErrors(['url', 'description']); //que existan errores en los valores requeridos 
     }
     public function test_delete()
     {
         $repository = Repository::factory()->create();
-        
+
         $user = User::factory()->create();
-        
+
         $this->actingAs($user) //emplea el usuario para la autenticacion.
             ->delete("repositories/$repository->id")
             ->assertRedirect('repositories');
 
-        $this->assertDatabaseMissing('repositories',['id'=>$repository->id]);
+        $this->assertDatabaseMissing('repositories', ['id' => $repository->id]);
+    }
+
+    /**
+     * Politicas de acceso
+     */
+    
+     /**
+     * Actualizamos un repositorio que no pertenece al usuario
+     */
+    public function test_update_policy()
+    {
+
+        $user = User::factory()->create(); //user id 1
+
+        $repository = Repository::factory()->create(); //repository 1 user id:2
+        $newData = Repository::factory()->make();
+
+        $data = [
+            'url' => $newData->url,
+            'description' => $newData->description
+        ];
+
+
+        $this->actingAs($user) //emplea el usuario para la autenticacion.
+            ->put("repositories/$repository->id", $data)
+            ->assertStatus(403); //Nosostros no podemos realizar la accion por que el servidor lo detiene
+
+        
     }
 }
