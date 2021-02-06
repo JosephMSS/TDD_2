@@ -30,14 +30,14 @@ class RepositoryControllerTest extends TestCase
     public function test_store()
     {
         $repository = Repository::factory()->make();
-
+        
         $data = [
             'url' => $repository->url,
             'description' => $repository->description
         ];
-
+        
         $user = User::factory()->create();
-
+        
         $this->actingAs($user) //emplea el usuario para la autenticacion.
             ->post('repositories', $data)
             ->assertRedirect('repositories');
@@ -48,18 +48,40 @@ class RepositoryControllerTest extends TestCase
     {
         $repository = Repository::factory()->create();
         $newData = Repository::factory()->make();
-
+        
         $data = [
             'url' => $newData->url,
             'description' => $newData->description
         ];
-
+        
         $user = User::factory()->create();
-
+        
         $this->actingAs($user) //emplea el usuario para la autenticacion.
             ->put("repositories/$repository->id", $data)
             ->assertRedirect("repositories/$repository->id/edit");
 
         $this->assertDatabaseHas('repositories', $data);
     }
+    public function test_validate_store()
+    {        
+        $user = User::factory()->create();
+        
+        $this->actingAs($user) //emplea el usuario para la autenticacion.
+            ->post('repositories', [])
+            ->assertStatus(302)//valido una redireccion a la misma pagina
+            ->assertSessionHasErrors(['url','description']);//que existan errores en los valores requeridos 
+
+    }
+    public function test_validate_update()
+    {
+        $repository = Repository::factory()->create();
+        
+        $user = User::factory()->create();
+        
+        $this->actingAs($user) //emplea el usuario para la autenticacion.
+            ->put("repositories/$repository->id", [])
+            ->assertStatus(302)//valido una redireccion a la misma pagina
+            ->assertSessionHasErrors(['url','description']);//que existan errores en los valores requeridos 
+    }
+    
 }

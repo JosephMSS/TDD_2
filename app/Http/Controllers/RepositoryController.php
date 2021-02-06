@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\RepositoryRequest as Request;
 use App\Models\Repository;
-use Illuminate\Http\Request;
 
 class RepositoryController extends Controller
 {
