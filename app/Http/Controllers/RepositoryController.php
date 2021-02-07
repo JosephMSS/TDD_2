@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\RepositoryRequest as Request;
+use App\Http\Requests\RepositoryRequest as RepositoryRequest;
 use App\Models\Repository;
-
+use Illuminate\Http\Request as Request;
 class RepositoryController extends Controller
 {
     /**
@@ -12,9 +12,10 @@ class RepositoryController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        //
+        $repositories=$request->user()->repositories;
+        return view('repositories.index', compact('repositories'));
     }
 
     /**
@@ -33,7 +34,7 @@ class RepositoryController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(RepositoryRequest $request)
     {
         $request->user()->repositories()->create($request->all());
         return  redirect()->route('repositories.index');
@@ -45,9 +46,11 @@ class RepositoryController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show(Repository $repository)
     {
-        //
+        $this->authorize('pass', $repository);
+
+        return view('repositories.show', compact('repository'));
     }
 
     /**
@@ -68,7 +71,7 @@ class RepositoryController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Repository $repository)
+    public function update(RepositoryRequest $request, Repository $repository)
     {
         $this->authorize('pass',$repository);
 
