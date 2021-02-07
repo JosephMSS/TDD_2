@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\RepositoryRequest as RepositoryRequest;
 use App\Models\Repository;
 use Illuminate\Http\Request as Request;
+
 class RepositoryController extends Controller
 {
     /**
@@ -14,7 +15,7 @@ class RepositoryController extends Controller
      */
     public function index(Request $request)
     {
-        $repositories=$request->user()->repositories;
+        $repositories = $request->user()->repositories;
         return view('repositories.index', compact('repositories'));
     }
 
@@ -59,9 +60,10 @@ class RepositoryController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit($id)
+    public function edit(Repository $repository)
     {
-        //
+        $this->authorize('pass', $repository);
+        return view('repositories.edit', compact('repository'));
     }
 
     /**
@@ -73,7 +75,7 @@ class RepositoryController extends Controller
      */
     public function update(RepositoryRequest $request, Repository $repository)
     {
-        $this->authorize('pass',$repository);
+        $this->authorize('pass', $repository);
 
         $repository->update($request->all());
 
@@ -88,11 +90,10 @@ class RepositoryController extends Controller
      */
     public function destroy(Repository $repository)
     {
-        $this->authorize('pass',$repository);
+        $this->authorize('pass', $repository);
 
         $repository->delete();
 
         return redirect()->route('repositories.index');
     }
-    
 }
