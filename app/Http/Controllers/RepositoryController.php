@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\RepositoryRequest as RepositoryRequest;
 use App\Models\Repository;
-use Illuminate\Http\Request as Request;
 
 class RepositoryController extends Controller
 {
@@ -13,9 +12,9 @@ class RepositoryController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index(Request $request)
+    public function index()
     {
-        $repositories = $request->user()->repositories;
+        $repositories = auth()->user()->repositories;//extraer todos los repositorios de un usuario especifico
         return view('repositories.index', compact('repositories'));
     }
 
