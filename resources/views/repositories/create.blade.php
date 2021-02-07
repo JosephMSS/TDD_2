@@ -15,11 +15,11 @@
                 type="text" name="url" id="url" >
                 <label for="" class="block font-medium text-gray-700">Descripcion*</label>
                 <textarea  class="form-input w-full rounded-md shadow-sm"
-                type="text" name="url" id="url" ">
+                type="text" name="description" id="url" ">
                 
                 </textarea>
                 <hr class="my-4">
-                <input type="submit" value="Editar" class="bg-blue-500 text-white font-bold py-2 px-4 rounded-md">
+                <input type="submit" value="Guardar" class="bg-blue-500 text-white font-bold py-2 px-4 rounded-md">
             </div>
         </div>
     </div>

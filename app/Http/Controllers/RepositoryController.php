@@ -78,8 +78,7 @@ class RepositoryController extends Controller
         $this->authorize('pass', $repository);
 
         $repository->update($request->all());
-
-        return  redirect()->route('repositories.edit', $repository);
+        return  redirect()->route('repositories.edit', $repository)->with('status','Editado con exito');
     }
 
     /**
