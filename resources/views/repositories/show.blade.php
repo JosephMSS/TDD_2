@@ -1,7 +1,7 @@
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            Repositorios
+            <a href="{{ route('repositories.index') }}">Repositorios</a> 
         </h2>
     </x-slot>
 
